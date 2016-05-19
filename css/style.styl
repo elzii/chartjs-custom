@@ -1,0 +1,60 @@
+@import "_helpers";
+@import "_typography";
+
+
+
+#chartjs-container {
+  width:80%;
+  margin:20px auto;
+  position: relative;
+  
+}
+
+
+#chart { }
+.chartjs-wrap {
+  // background-color: rgba(250, 210, 162, 1.0);
+}
+  
+  canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    
+    height:100%;
+  }
+
+
+#chartjs-tooltip {
+  opacity: 1;
+  position: absolute;
+  background: rgba(0, 0, 0, .7);
+  color: white;
+  border-radius: 3px;
+  pointer-events: none;
+  
+  transition: all .1s ease;
+  transform: translate(-50%, 0);
+}
+.chartjs-tooltip-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+
+
+
+.section {
+  width:100%;
+  padding:60px 0;
+  
+  &.section--content {
+    background-color: #efefef;
+    background-image: radial-gradient(circle 980px at 55.83% 14.43%, transparent 0%, rgba(0, 90, 164, 0.01) 100%, rgba(36, 43, 51, 0.01) 100%);
+  }
+  
+
+}
+
+
+
