@@ -21,9 +21,11 @@ var customTooltips = function(tooltip) {
       $tooltip         = $('#chartjs-tooltip'),
       position         = $(this._chart.canvas)[0].getBoundingClientRect()
 
+  console.log('tooltip', tooltip)
+
 
   // Log
-  console.log('tooltip', tooltip)
+  // console.log('tooltip', tooltip)
 
   tooltip.yAlign = 'above'
 
@@ -61,20 +63,18 @@ var customTooltips = function(tooltip) {
   if ( tooltip.body ) { setTooltipText( tooltip, $tooltip ) }
 
   // Find Y Location on page
-  var top = 0;
-  if (tooltip.yAlign) {
-    if (tooltip.yAlign == 'above') {
-      top = tooltip.y;
-    } else {
-      top = tooltip.y;
-      console.log('below', top)
-    }
-  }
-
+  // var top = 0;
+  // if (tooltip.yAlign) {
+  //   if (tooltip.yAlign == 'above') {
+  //     top = tooltip.y;
+  //   } else {
+  //     top = tooltip.y;
+  //     console.log('below', top)
+  //   }
+  // }
 
   // get Tooltip position
   setTooltipCSS(tooltip, position, $tooltip)
-
 
 };
 
@@ -105,7 +105,9 @@ var setTooltipText = function(tt, tt_el) {
  */
 var setTooltipCSS = function(tt, position, tt_el) {
 
-  console.log('position', position)
+  // console.log('position', position)
+  console.log('tt.x', tt.x)
+  console.log('', tt.x)
 
   tt_el.css({
     opacity: 1,
@@ -233,28 +235,27 @@ window.onload = function() {
       scales: {
 
         /**
-         * Scale - X-AXIS
+         * Scale - Y-AXIS
          */
         yAxes: [{
           id: 'y-axis-0',
+          type: 'linear',
           display: false,
 
           gridLines: {
             display: false,
             lineWidth: 1,
-            color: "rgba(255,255,255,0.85)"
+            color: "rgba(255,255,255,0.3)"
           },
+
           ticks: {
             beginAtZero:true,
             mirror:true,
             fontColor: "rgba(255,255,255,0.8)",
-            fontSize: 14,
+            fontSize: 15,
             suggestedMin: 0,
             suggestedMax: 500,
-            stepSize: 100
-          },
-          afterBuildTicks: function(chart) {
-            
+            stepSize: 100,
           },
           
         }],
@@ -266,34 +267,21 @@ window.onload = function() {
          * Scale - Y-AXIS
          */
         xAxes: [{
-          height:120,
-
           id: 'x-axis-0',
+          type: 'category',
 
           gridLines: {
             display: false,
           },
 
-          position: 'bottom',
-
-          labels: {
-            generateLabels: function(labels) {
-              console.log('generateLabels', labels)
-            }
-          },
-
-          beforeFit: function(scale) {
-            // console.log('beforeFit', scale)
-            var defaultFontSize = Chart.helpers.getValueOrDefault( Chart.defaults.global.defaultFontSize) );
-          },
-
-          // scaleLabel: {
-          //   display: true,
-          //   labelString: 'farts'
+          // beforeFit: function(scale) {
+          //   var defaultFontSize = Chart.helpers.getValueOrDefault( Chart.defaults.global.defaultFontSize);
           // },
 
+
           ticks: {
-            beginAtZero: true
+            fontSize: 18,
+            fontStyle: "normal",
           },
         }]
       },
@@ -317,18 +305,12 @@ window.onload = function() {
           helpers   = Chart.helpers,
           chartArea = chart.chartArea;
 
-      // console.log('chart.scales', chart.scales)
-      // console.log('xScale', xScale)
+      // override left prop on chart area
+      // chartArea.left = 0;
 
-      yScale.paddingTop = 30;
-      yScale.paddingBottom = 20;
-
-      // xScale.top = 20;
-
-      // xScale.options.scaleLabel.display = false;
-    
-      xScale.height = 100;
-      
+      yScale.paddingTop = 25;
+      yScale.paddingBottom = 40;
+      // yScale.paddingBottom = 0;
 
       // draw labels - all we do is turn on display and call scale.draw
       yScale.options.display = true;
@@ -337,9 +319,8 @@ window.onload = function() {
 
       // draw the grid lines - simplified version of library code
       helpers.each( yScale.ticks, function (label, index) {
-        if (label === undefined || label === null) {
-          return;
-        }
+
+        if (label === undefined || label === null) { return; }
 
         var yLineValue = this.getPixelForTick(index);
             yLineValue += helpers.aliasPixel(this.ctx.lineWidth);
@@ -355,6 +336,11 @@ window.onload = function() {
 
       }, yScale);
 
+      helpers.each( xScale, function (val, prop) {
+        if (prop === undefined || prop === null) { return; }
+      }, xScale)
+
+      // console.log('xScale', xScale)
       
     },
   })
@@ -405,5 +391,8 @@ window.onload = function() {
   //       ctx.restore();
   //     }
   // });
+
+
+  console.log('Chart.helpers', Chart.helpers)
 
 };
