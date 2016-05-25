@@ -45,7 +45,7 @@ h4 {
   height: calc(100% - 35px);
 }
 canvas {
-  width: calc(100% + 22px) !important;
+  width: calc(100% + 16px) !important;
   margin-left: -12px;
   background-color: #fad2a2;
   -moz-user-select: none;

@@ -2,16 +2,13 @@
  * Chart.js Global Config
  */
 Chart.defaults.global.pointHitDetectionRadius = 5;
-// console.log('Chart.defaults.global.elements', Chart.defaults.global.elements)
 window.count = 0;
-
-// var ctx = document.getElementById('canvas').getContext('2d');
-
 
 
 
 /**
  * Custom Tooltips
+ * 
  * @param  {Element} tooltip 
  */
 var customTooltips = function(tooltip) {
@@ -56,7 +53,6 @@ var customTooltips = function(tooltip) {
   } else {
     $tooltip.addClass('no-transform');
   }
-
 
 
   // Set Text
@@ -121,17 +117,14 @@ var setTooltipCSS = function(tt, position, tt_el) {
 }
 
 
+
 /**
- * Debug Tooltips
+ * Buffer Chart Data Overflow
  * 
- * @param  {Object} tt 
+ * @param  {Array} chart_data 
+ * @param  {Number} data_index 
+ * @return {Array}
  */
-var debugTooltip = function(tt) {
-  
-}
-
-
-
 var bufferChartDataOverflow = function(chart_data, data_index) {
 
   var data_index = data_index ? data_index : 0;
@@ -183,6 +176,31 @@ var lineChartData = {
 
 
 
+var debugCustomTooltips = function(tooltip) {
+
+  var position = $(this._chart.canvas)[0].getBoundingClientRect()
+
+  console.log('tooltip position', position, tooltip)
+
+  console.table([{
+    x: tooltip.x,
+    y: tooltip.y,
+    yAlign: tooltip.yAlign,
+    xAlign: tooltip.xAlign,
+
+    top: position.top,
+    right: position.right,
+    bottom: position.bottom,
+    left: position.left,
+
+    width: position.width,
+    height: position.height,
+  }])
+
+}
+
+
+
 
 /**
  * Init
@@ -218,7 +236,10 @@ window.onload = function() {
 
       // Tooltips
       tooltips: {
-        enabled: false,
+        enabled: true,
+        // enabled: false,
+        // custom: customTooltips
+        custom: debugCustomTooltips
       },
 
       // Scales
@@ -226,15 +247,19 @@ window.onload = function() {
         yAxes: [{
           id: 'y-axis-0',
           display: false,
+          type: 'linear',
+
           gridLines: {
             display: false,
             lineWidth: 1,
             color: "rgba(255,255,255,0.85)"
           },
+
           ticks: {
             beginAtZero:true,
             mirror:true,
             fontColor: "rgba(255,255,255,0.8)",
+            fontSize: 15,
             suggestedMin: 0,
             suggestedMax: 500,
             stepSize: 100,
@@ -249,6 +274,8 @@ window.onload = function() {
         }],
         xAxes: [{
           id: 'x-axis-0',
+          type: 'category',
+
           gridLines: {
             display: false,
           },
