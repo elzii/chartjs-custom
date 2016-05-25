@@ -106,8 +106,6 @@ var setTooltipText = function(tt, tt_el) {
 var setTooltipCSS = function(tt, position, tt_el) {
 
   // console.log('position', position)
-  console.log('tt.x', tt.x)
-  console.log('', tt.x)
 
   tt_el.css({
     opacity: 1,
@@ -163,11 +161,11 @@ var lineChartData = {
   datasets: [{
     label: "Students",
     data: [ 200, 250,220,180,290,300,370,350,200,280,260,190,210, 200 ],
-    backgroundColor: "rgba(247,155,45,1.0)",
+    backgroundColor: "rgba(247,155,45,0.65)",
     borderColor: "rgba(247,155,45,1.0)",
     borderCapStyle: 'butt',
-    // borderDash: [],
-    // borderDashOffset: 0.0,
+    borderDash: [],
+    borderDashOffset: 0.0,
     pointBorderColor: "rgba(245,245,245,1)",
     pointBackgroundColor: "rgba(80,81,81,1)",
     pointHoverBorderWidth: 5,
@@ -200,10 +198,8 @@ window.onload = function() {
     type: 'line',
     
     data: lineChartData,
-
     
     options: {
-
       responsive: true,
       maintainAspectRatio: false,
 
@@ -223,66 +219,43 @@ window.onload = function() {
       // Tooltips
       tooltips: {
         enabled: false,
-        custom: customTooltips
       },
-
-      animation: {
-        onComplete: function() {},
-      },
-
 
       // Scales
       scales: {
-
-        /**
-         * Scale - Y-AXIS
-         */
         yAxes: [{
           id: 'y-axis-0',
-          type: 'linear',
           display: false,
-
           gridLines: {
             display: false,
             lineWidth: 1,
-            color: "rgba(255,255,255,0.3)"
+            color: "rgba(255,255,255,0.85)"
           },
-
           ticks: {
             beginAtZero:true,
             mirror:true,
             fontColor: "rgba(255,255,255,0.8)",
-            fontSize: 15,
             suggestedMin: 0,
             suggestedMax: 500,
             stepSize: 100,
+            callback: function(value) {
+              if (value !== 0 && value !== 500)
+                return '' + value;
+            },
           },
-          
+          afterBuildTicks: function(chart) {
+            
+          }
         }],
-
-
-
-
-        /**
-         * Scale - Y-AXIS
-         */
         xAxes: [{
           id: 'x-axis-0',
-          type: 'category',
-
           gridLines: {
             display: false,
           },
-
-          // beforeFit: function(scale) {
-          //   var defaultFontSize = Chart.helpers.getValueOrDefault( Chart.defaults.global.defaultFontSize);
-          // },
-
-
           ticks: {
-            fontSize: 18,
-            fontStyle: "normal",
+            beginAtZero: true
           },
+
         }]
       },
     }
@@ -297,101 +270,48 @@ window.onload = function() {
    * @param  {Number} easingDecimal)
    */
   Chart.pluginService.register({
+  afterDraw: function (chart, easingDecimal) {
+    var yScale = chart.scales['y-axis-0'];
+    var helpers = Chart.helpers;
+    var chartArea = chart.chartArea;
 
-    afterDraw: function (chart, easingDecimal) {
-      
-      var yScale    = chart.scales['y-axis-0'],
-          xScale    = chart.scales['x-axis-0'],
-          helpers   = Chart.helpers,
-          chartArea = chart.chartArea;
+    // draw labels - all we do is turn on display and call scale.draw
+    yScale.options.display = true;
+    yScale.draw.apply(yScale, [chartArea]);
+    yScale.options.display = false;
 
-      // override left prop on chart area
-      // chartArea.left = 0;
+    // draw the grid lines - simplified version of library code
+    yScale.ctx.save();
+    yScale.ctx.globalCompositeOperation = 'destination-over';
+    helpers.each(yScale.ticks, function (label, index) {
+      if (label === undefined || label === null) {
+        return;
+      }
 
-      yScale.paddingTop = 25;
-      yScale.paddingBottom = 40;
-      // yScale.paddingBottom = 0;
+      var yLineValue = this.getPixelForTick(index);
+      yLineValue += helpers.aliasPixel(this.ctx.lineWidth);
 
-      // draw labels - all we do is turn on display and call scale.draw
-      yScale.options.display = true;
-      yScale.draw.apply(yScale, [chartArea]);
-      yScale.options.display = false;
+      this.ctx.lineWidth = this.options.gridLines.lineWidth;
+      this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
 
-      // draw the grid lines - simplified version of library code
-      helpers.each( yScale.ticks, function (label, index) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(chartArea.left + 40, yLineValue);
+      this.ctx.lineTo(chartArea.right, yLineValue);
+      this.ctx.stroke();
 
-        if (label === undefined || label === null) { return; }
-
-        var yLineValue = this.getPixelForTick(index);
-            yLineValue += helpers.aliasPixel(this.ctx.lineWidth);
-
-        this.ctx.lineWidth = this.options.gridLines.lineWidth;
-        this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        // this.ctx.globalCompositeOperation = "destination-over"
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(chartArea.left + 45, yLineValue);
-        this.ctx.lineTo(chartArea.right, yLineValue);
-        this.ctx.stroke();
-
-      }, yScale);
-
-      helpers.each( xScale, function (val, prop) {
-        if (prop === undefined || prop === null) { return; }
-      }, xScale)
-
-      // console.log('xScale', xScale)
-      
-    },
-  })
+    }, yScale);
+    yScale.ctx.restore();    
+    
+    yScale.ctx.save();
+    yScale.ctx.fillStyle = 'white';
+    yScale.ctx.globalCompositeOperation = 'destination-over';
+    yScale.ctx.fillRect(0, yScale.bottom, chartArea.right, chartArea.bottom);
+    yScale.ctx.restore();    
+  },
+});
 
 
   // console.log('window.lineChart', window.lineChart)
-
-  // Chart.types.Line.extend({
-  //     name: "LineAlt",
-  //     initialize: function(){
-  //       // add some extra width the the y axis labels
-  //       this.options.scaleLabel = "   " + this.options.scaleLabel;
-  //       Chart.types.Line.prototype.initialize.apply(this, arguments);
-  //     },
-  //     draw: function(){
-  //       Chart.types.Line.prototype.draw.apply(this, arguments);
-
-  //       ctx.save();
-  //       ctx.fillStyle = '#fcc';
-  //       // the fill should be under the text
-  //       ctx.globalCompositeOperation = "destination-over"
-
-  //       // draw background under x axis labels
-  //       Chart.helpers.each(this.scale.xLabels, function(label, index){
-  //         var xPos = this.calculateX(index) + Chart.helpers.aliasPixel(this.lineWidth),
-  //           isRotated = (this.xLabelRotation > 0);
-
-  //         ctx.save();
-  //         ctx.translate(xPos, (isRotated) ? this.endPoint + 12 : this.endPoint + 8);
-  //         ctx.rotate(Chart.helpers.radians(this.xLabelRotation) * -1);
-  //         var width = ctx.measureText(label).width;
-  //         // add a 4px padding on each side
-  //         // the height is set to 1.5 times the font size since there is no method to measure height easily
-  //         ctx.fillRect(-width / 2 - 4, 0, width + 8, this.fontSize * 1.5);
-  //         ctx.restore();
-  //       }, this.scale)
-
-  //       // draw background under y axis labels
-  //       var yLabelGap = (this.scale.endPoint - this.scale.startPoint) / this.scale.steps,
-  //           xStart = Math.round(this.scale.xScalePaddingLeft);
-  //       Chart.helpers.each(this.scale.yLabels,function(labelString, index){
-  //                   var yLabelCenter = this.endPoint - (yLabelGap * index);
-  //         var width = ctx.measureText(labelString).width;
-  //         // add some padding on the side - we don't need to increase the width because we use the width added by the extra space
-  //         ctx.fillRect(xStart - width - 4, yLabelCenter - this.fontSize * 1.5 / 2, width, this.fontSize * 1.5);
-  //       }, this.scale);
-
-  //       ctx.restore();
-  //     }
-  // });
-
 
   console.log('Chart.helpers', Chart.helpers)
 
