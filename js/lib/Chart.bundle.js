@@ -1,3 +1,6 @@
+var custom_debug = true;
+var custom_disablie_tooltip_align = false;
+
 /*!
  * Chart.js
  * http://chartjs.org/
@@ -10646,6 +10649,11 @@ module.exports = function(Chart) {
         y += yPositions[i];
       }
 
+      // console.log('getAveragePosition', {
+      //   x: Math.round(x / xPositions.length),
+      //   y: Math.round(y / xPositions.length)
+      // })
+
       return {
         x: Math.round(x / xPositions.length),
         y: Math.round(y / xPositions.length)
@@ -10717,12 +10725,14 @@ module.exports = function(Chart) {
           x: Math.round(tooltipPosition.x),
           y: Math.round(tooltipPosition.y),
           caretPadding: helpers.getValueOrDefault(tooltipPosition.padding, 2),
+          caretPadding: 0,
           labelColors: labelColors
         });
 
         // We need to determine alignment of
         var tooltipSize = this.getTooltipSize(this._model);
-        this.determineAlignment(tooltipSize); // Smart Tooltip placement to stay on the canvas
+
+        if ( custom_disablie_tooltip_align ) this.determineAlignment(tooltipSize); // Smart Tooltip placement to stay on the canvas
 
         helpers.extend(this._model, this.getBackgroundPoint(this._model, tooltipSize));
       } else {
@@ -10791,16 +10801,20 @@ module.exports = function(Chart) {
 
       if (this._model.yAlign === 'center') {
         lf = function(x) {
+          if ( custom_debug ) console.log('this._model.yAlign === "center", => lf')
           return x <= midX;
         };
         rf = function(x) {
+          if ( custom_debug ) console.log('this._model.yAlign === "center", => rf')
           return x > midX;
         };
       } else {
         lf = function(x) {
+          if ( custom_debug ) console.log('this._model.yAlign !== "center", => lf')
           return x <= (size.width / 2);
         };
         rf = function(x) {
+          if ( custom_debug ) console.log('this._model.yAlign !== "center", => rf')
           return x >= (_this._chart.width - (size.width / 2));
         };
       }
@@ -10824,7 +10838,8 @@ module.exports = function(Chart) {
           this._model.yAlign = yf(this._model.y);
         }
       } else if (rf(this._model.x)) {
-        this._model.xAlign = 'right';
+        // this._model.xAlign = 'right';
+        this._model.xAlign = 'center';
 
         // Is tooltip too wide and goes outside left edge of canvas?
         if (orf(this._model.x)) {

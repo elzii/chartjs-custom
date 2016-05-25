@@ -2,54 +2,75 @@
 @import "_typography";
 
 
+/**
+ * ChartJS
+ *
+ */ 
+#chartjs-container {}
 
-#chartjs-container {
-  // position: relative;
-  // display:block;
-  // width:100%;
-  // height:500px;
-  // padding:0;
-  // margin:20px auto;
-
-  overflow:hidden;
-  
-  width:100%;
-  margin:20px auto;
+.chartjs-container {
+  margin:50px auto;
   position: relative;
-   
-  &:before {
-    // content:'';
-    position: absolute;
-    top:0;left:0;
-    width:100%;
-    // background-color: rgba(250, 210, 162, 1.0);
-    // z-index:100; 
-    
-    // Hack
-    height: calc(100% - 35px);
-  }
+  width:100%;
+  position: relative;
 }
-.chartjs-wrap { }
-  
-#chart { }
-  canvas {
-    // position:relative;
-    // z-index:10;
-    // border:none;
-    // box-sizing:border-box;
-    // display:block;
-    // width: 100% !important;
-    // height:100%;
-    width: calc(100% + 16px) !important;
-    margin-left:-12px;
-      
-    background-color: rgba(250, 210, 162, 1.0);
-    
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-  }
 
+.chartjs-inner {
+  position: relative;
+  width:100%;
+  overflow:hidden; 
+}
+  
+#chartjs-chart-1 {}
+#chartjs-chart-2 {}
+
+// <canvas>
+.chartjs-canvas {
+  width: calc(100% + 16px) !important;
+  width: 100%;
+  margin-left:-12px;
+    
+  background-color: rgba(250, 210, 162, 1.0);
+  
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+
+
+
+
+/**
+ * ChartJS Tooltips
+ */ 
+.chartjs-tooltips {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:0px;
+  
+  // temp
+  .chartjs-tooltips__tooltip {
+    position: absolute;
+    
+    // offset left to start
+    left: -100%;
+    
+    // center horiz
+    top:-50px;  
+    height:50px;
+    
+    // width:50px;
+    // margin-left:-25px;
+    
+    width:80px;
+    margin-left:-40px;
+    
+    transition: all 150ms ease-in-out;
+    
+    background-color:rgba(0,0,0,0.8);
+  }
+} 
 
 #chartjs-tooltip {
   opacity: 1;
@@ -70,6 +91,12 @@
 
 
 
+
+
+
+/**
+ * Section
+ */ 
 .section {
   width:100%;
   padding:60px 0;
@@ -78,9 +105,4 @@
     background-color: #efefef;
     background-image: radial-gradient(circle 980px at 55.83% 14.43%, transparent 0%, rgba(0, 90, 164, 0.01) 100%, rgba(36, 43, 51, 0.01) 100%);
   }
-  
-
 }
-
-
-
